@@ -18,12 +18,12 @@ export class AuthenticationService {
     const userByEmail = await this.userService.findUserByEmail(body.email);
 
     if (!userByEmail) {
-      throw new BadRequestException("Email or Password is invalid!")
+      throw new BadRequestException(["Email or Password is invalid!"])
     }
 
     const isValidPassword = await this.bcryptService.comparePassword(body.password, userByEmail.password);
     if (!isValidPassword) {
-      throw new BadRequestException("Email or Password is invalid!")
+      throw new BadRequestException(["Email or Password is invalid!"])
     }
 
     const currentToken = await this.tokenService.getToken(userByEmail);

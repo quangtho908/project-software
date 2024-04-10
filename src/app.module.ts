@@ -17,7 +17,8 @@ import { UserModule } from './users/user.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: Object.values(entities)
+      entities: Object.values(entities),
+      ssl: true
     }),
     JwtModule.register({
       global: true,

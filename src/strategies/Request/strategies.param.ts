@@ -10,12 +10,12 @@ export class StrategiesParams {
     example: 1,
     required: false
   })
-  public university: number;
+  public university?: number;
 
   @ApiProperty({
     example: 0,
     required: false,
     description: "0 is Waiting for Accept, 1 is Accepted"
   })
-  public status: number;
+  public status?: number;
 }

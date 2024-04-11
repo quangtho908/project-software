@@ -13,6 +13,7 @@ import { UserModule } from "src/users/user.module";
     UserModule
   ],
   providers: [StrategiesService],
-  controllers: [StrategiesController]
+  controllers: [StrategiesController],
+  exports: [StrategiesService]
 })
 export class StrategiesModule {}

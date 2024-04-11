@@ -16,6 +16,10 @@ export class StrategiesService {
     private universitiesService: UniversitiesService
   ) { }
 
+  public findById(id: number) {
+    return this.strategiesRepo.findOneBy({ id });
+  }
+
   public async getOne(data: StrategiesParams) {
     const strategy = await this.strategiesRepo.findOneBy(data)
     if (_.isEmpty(strategy)) {

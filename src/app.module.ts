@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './users/user.module';
 import { StrategiesModule } from './strategies/strategies.module';
 import { UniversitiesModule } from './universities/universities.module';
+import { ApplicantsModule } from './applicants/applicants.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { UniversitiesModule } from './universities/universities.module';
     AuthenticationModule,
     UserModule,
     StrategiesModule,
-    UniversitiesModule
+    UniversitiesModule,
+    ApplicantsModule
   ]
 })
 export class AppModule {}

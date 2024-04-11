@@ -8,6 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Applicants } from "./Applicants";
 import { Strategies } from "./Strategies";
 import { Users } from "./Users";
 
@@ -25,6 +26,15 @@ export class Universities {
 
   @Column("timestamp with time zone", { name: "updated_at", nullable: true })
   updatedAt: Date | null;
+
+  @Column("text", { name: "code", nullable: true })
+  code: string | null;
+
+  @Column("text", { name: "image", nullable: true })
+  image: string | null;
+
+  @OneToMany(() => Applicants, (applicants) => applicants.university)
+  applicants: Applicants[];
 
   @ManyToMany(() => Strategies, (strategies) => strategies.universities)
   strategies: Strategies[];

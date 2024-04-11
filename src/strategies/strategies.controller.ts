@@ -8,14 +8,13 @@ import { Users } from "src/entities";
 import * as _ from "lodash";
 
 @ApiTags("strategy")
-@Controller("strategy")
+@Controller()
 export class StrategiesController {
   constructor(private strategiesService: StrategiesService) {}
 
-
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @Get()
+  @Get("strategies")
   public get(@Query() params: StrategiesParams) {
     if(!_.isEmpty(params.id)) {
       return this.strategiesService.getOne(params);
@@ -26,7 +25,7 @@ export class StrategiesController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @Post()
+  @Post("strategy")
   public create(@Body() body: CreateStrategyBody, @User() user: Users) {
     return this.strategiesService.create(body, user);
   }

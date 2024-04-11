@@ -6,7 +6,6 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Applicants } from "./Applicants";
@@ -46,7 +45,7 @@ export class Strategies {
   @Column("integer", { name: "status", default: () => "0" })
   status: number;
 
-  @OneToMany(() => Applicants, (applicants) => applicants.strategy)
+  @ManyToMany(() => Applicants, (applicants) => applicants.strategies)
   applicants: Applicants[];
 
   @ManyToMany(() => Universities, (universities) => universities.strategies)

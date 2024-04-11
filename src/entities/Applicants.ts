@@ -3,11 +3,14 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Strategies } from "./Strategies";
+import { Universities } from "./Universities";
 import { Users } from "./Users";
+import { Strategies } from "./Strategies";
 
 @Index("applicants_pkey", ["id"], { unique: true })
 @Entity("applicants", { schema: "public" })
@@ -21,9 +24,6 @@ export class Applicants {
   @Column("text", { name: "email" })
   email: string;
 
-  @Column("integer", { name: "university" })
-  university: number;
-
   @Column("timestamp with time zone", { name: "created_at", nullable: true })
   createdAt: Date | null;
 
@@ -33,11 +33,28 @@ export class Applicants {
   @Column("integer", { name: "status", default: () => "0" })
   status: number;
 
-  @ManyToOne(() => Strategies, (strategies) => strategies.applicants)
-  @JoinColumn([{ name: "strategy", referencedColumnName: "id" }])
-  strategy: Strategies;
+  @Column("text", { name: "mssv" })
+  mssv: string;
+
+  @Column("text", { name: "skill" })
+  skill: string;
+
+  @ManyToOne(() => Universities, (universities) => universities.applicants, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn([{ name: "university", referencedColumnName: "id" }])
+  university: Universities;
 
   @ManyToOne(() => Users, (users) => users.applicants)
   @JoinColumn([{ name: "updated_by", referencedColumnName: "id" }])
   updatedBy: Users;
+
+  @ManyToMany(() => Strategies, (strategies) => strategies.applicants)
+  @JoinTable({
+    name: "applicants_strategies",
+    joinColumns: [{ name: "applicant", referencedColumnName: "id" }],
+    inverseJoinColumns: [{ name: "strategy", referencedColumnName: "id" }],
+    schema: "public",
+  })
+  strategies: Strategies[];
 }

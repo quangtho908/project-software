@@ -22,14 +22,29 @@ export class Strategies {
   @Column("text", { name: "name" })
   name: string;
 
-  @Column("text", { name: "description", nullable: true })
-  description: string | null;
+  @Column("text", { name: "description" })
+  description: string;
 
-  @Column("timestamp with time zone", { name: "created_at", nullable: true })
-  createdAt: Date | null;
+  @Column("timestamp with time zone", { name: "created_at" })
+  createdAt: Date;
 
   @Column("timestamp with time zone", { name: "updated_at", nullable: true })
   updatedAt: Date | null;
+
+  @Column("text", { name: "place" })
+  place: string;
+
+  @Column("timestamp with time zone", { name: "start_at" })
+  startAt: Date;
+
+  @Column("timestamp with time zone", { name: "end_at" })
+  endAt: Date;
+
+  @Column("text", { name: "image", nullable: true })
+  image: string | null;
+
+  @Column("integer", { name: "status", default: () => "0" })
+  status: number;
 
   @OneToMany(() => Applicants, (applicants) => applicants.strategy)
   applicants: Applicants[];

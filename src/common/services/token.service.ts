@@ -58,7 +58,7 @@ export class TokenService {
     this.tokenRepository.update({ user }, { isExpired: true })
   }
 
-  public async verifyToken(token: string) {
+  public verifyToken(token: string) {
     try {
       const data: {
         id: number,

@@ -3,14 +3,13 @@ import {
   Entity,
   Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Universities } from "./Universities";
 import { Users } from "./Users";
-import { Strategies } from "./Strategies";
+import { ApplicantsStrategies } from "./ApplicantsStrategies";
 
 @Index("applicants_pkey", ["id"], { unique: true })
 @Entity("applicants", { schema: "public" })
@@ -30,9 +29,6 @@ export class Applicants {
   @Column("timestamp with time zone", { name: "updated_at", nullable: true })
   updatedAt: Date | null;
 
-  @Column("integer", { name: "status", default: () => "0" })
-  status: number;
-
   @Column("text", { name: "mssv" })
   mssv: string;
 
@@ -49,12 +45,9 @@ export class Applicants {
   @JoinColumn([{ name: "updated_by", referencedColumnName: "id" }])
   updatedBy: Users;
 
-  @ManyToMany(() => Strategies, (strategies) => strategies.applicants)
-  @JoinTable({
-    name: "applicants_strategies",
-    joinColumns: [{ name: "applicant", referencedColumnName: "id" }],
-    inverseJoinColumns: [{ name: "strategy", referencedColumnName: "id" }],
-    schema: "public",
-  })
-  strategies: Strategies[];
+  @OneToMany(
+    () => ApplicantsStrategies,
+    (applicantsStrategies) => applicantsStrategies.applicant2
+  )
+  applicantsStrategies: ApplicantsStrategies[];
 }

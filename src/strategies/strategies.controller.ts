@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { StrategiesService } from "./strategies.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateStrategyBody, StrategiesParams } from "./Request";
@@ -28,5 +28,12 @@ export class StrategiesController {
   @Post("strategy")
   public create(@Body() body: CreateStrategyBody, @User() user: Users) {
     return this.strategiesService.create(body, user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Put("strategy/accept/:id")
+  public accept(@Param("id") id: number) {
+    return this.strategiesService.accept(id);
   }
 }

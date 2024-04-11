@@ -6,9 +6,10 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Applicants } from "./Applicants";
+import { ApplicantsStrategies } from "./ApplicantsStrategies";
 import { Universities } from "./Universities";
 import { Users } from "./Users";
 
@@ -45,8 +46,11 @@ export class Strategies {
   @Column("integer", { name: "status", default: () => "0" })
   status: number;
 
-  @ManyToMany(() => Applicants, (applicants) => applicants.strategies)
-  applicants: Applicants[];
+  @OneToMany(
+    () => ApplicantsStrategies,
+    (applicantsStrategies) => applicantsStrategies.strategy2
+  )
+  applicantsStrategies: ApplicantsStrategies[];
 
   @ManyToMany(() => Universities, (universities) => universities.strategies)
   @JoinTable({

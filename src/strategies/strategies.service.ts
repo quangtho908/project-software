@@ -6,6 +6,7 @@ import { CreateStrategyBody, StrategiesParams } from "./Request";
 import { UniversitiesService } from "src/universities/universities.service";
 import { Successfully } from "src/common/model/response.model";
 import * as _ from "lodash";
+import { StrategyStatus } from "src/common/constant";
 
 @Injectable()
 export class StrategiesService {
@@ -72,4 +73,15 @@ export class StrategiesService {
     })
   }
 
+  public async accept(id: number) {
+    const strategy = await this.findById(id);
+    if(!strategy) {
+      throw new NotFoundException(["Strategy is not exist"]);
+    }
+
+    strategy.status = StrategyStatus.ACCEPTED;
+
+    await this.strategiesRepo.save(strategy);
+    return new Successfully()
+  }
 }

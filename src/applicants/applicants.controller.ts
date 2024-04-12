@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { UpdateApplyParam, CreateApplicantBody } from "./Request";
 import { ApplicantsService } from "./applicants.service";
@@ -7,6 +7,8 @@ import { AcceptApplyBody } from "./Request";
 import { RoleGuard } from "src/common/guard/role.guard";
 import { UserRole } from "src/common/constant";
 import { AuthGuard } from "src/common/guard/auth.guard";
+import { GetApplicantParam } from "./Request/getApplicants.param";
+import * as _ from "lodash";
 
 @ApiTags("applicants")
 @Controller()
@@ -17,6 +19,19 @@ export class ApplicantsController {
     private appliStraService: ApplicantStrategyService
   ) {}
 
+
+  @ApiBearerAuth()
+  @UseGuards(new RoleGuard(UserRole.SCHOOL))
+  @UseGuards(AuthGuard)
+  @Get("applicant")
+  public get(@Query() params: GetApplicantParam) {
+    if(_.isEmpty(params.applicant)) {
+      return this.applicantsService.getList(params);
+    }
+
+    return this.applicantsService.getOne(params)
+  }
+  
   @Post("applicant")
   public create(@Body() body: CreateApplicantBody) {
     return this.applicantsService.create(body);

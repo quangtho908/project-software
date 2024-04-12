@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Applicants, Strategies } from "src/entities";
+import { Applicants, ApplicantsStrategies, Strategies } from "src/entities";
 import { StrategiesService } from "src/strategies/strategies.service";
 import { UniversitiesService } from "src/universities/universities.service";
 import { Repository } from "typeorm";
@@ -8,6 +8,7 @@ import { CreateApplicantBody } from "./Request";
 import * as _ from "lodash";
 import { Successfully } from "src/common/model/response.model";
 import { ApplicantStrategyService } from "./applicantStrategy.service";
+import { GetApplicantParam } from "./Request/getApplicants.param";
 
 @Injectable()
 export class ApplicantsService {
@@ -19,7 +20,37 @@ export class ApplicantsService {
     private applicantsRepo: Repository<Applicants>
   ) { }
 
+  public async getOne(params: GetApplicantParam) {
+    const strategy = await this.strategiesService.findById(params.strategy);
+    if(_.isEmpty(strategy)) {
+      throw new BadRequestException(["Strategy is not exist"])
+    }
 
+    const applicant = await this.appliStraService.findOneBy(params)
+    if(_.isEmpty(applicant)) {
+      throw new BadRequestException(["Applicant is Change status or not have in Strategy"])
+    }
+    return new Successfully({
+      ...applicant.applicant2,
+      status: applicant.status
+    })
+
+  }
+
+  public async getList(params: GetApplicantParam) {
+    const strategy = await this.strategiesService.findById(params.strategy);
+    if(_.isEmpty(strategy)) {
+      throw new BadRequestException(["Strategy is not exist"])
+    }
+
+    const applicants = await this.appliStraService.findManyBy(params)
+    const result = _.map(applicants, (applicant) => ({
+      ...applicant.applicant2,
+      status: applicant.status
+    }))
+
+    return new Successfully(result)
+  }
 
   public async create(body: CreateApplicantBody) {
     const { university, strategy, ...data } = body;

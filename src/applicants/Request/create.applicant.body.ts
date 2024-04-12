@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNumber } from "class-validator";
 
 export class CreateApplicantBody {
   @ApiProperty({
@@ -22,6 +22,7 @@ export class CreateApplicantBody {
     required: true
   })
   @IsNotEmpty()
+  @IsNumber()
   public university: number;
 
   @ApiProperty({
@@ -43,5 +44,6 @@ export class CreateApplicantBody {
     required: true
   })
   @IsNotEmpty()
+  @IsNumber()
   public strategy: number;
 }

@@ -1,16 +1,29 @@
-import { Body, Controller, Delete, Param, Post, UseGuards } from "@nestjs/common";
-import { CreateSchoolUserBody } from "./Request";
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { CreateSchoolUserBody, GetUserQuery } from "./Request";
 import { UserService } from "./user.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RoleGuard } from "src/common/guard/role.guard";
 import { UserRole } from "src/common/constant";
 import { AuthGuard } from "src/common/guard/auth.guard";
+import * as _ from "lodash";
 
 @ApiTags("users")
 @Controller("users")
 export class UserController {
 
   constructor(private userService: UserService) {}
+
+  @ApiBearerAuth()
+  @UseGuards(new RoleGuard(UserRole.SCHOOL))
+  @UseGuards(AuthGuard)
+  @Get()
+  public get(@Query() body: GetUserQuery) {
+    if(_.isEmpty(body.id)) {
+      return this.userService.getMany(body)
+    }
+
+    return this.userService.getOne(body.id)
+  }
 
   @ApiBearerAuth()
   @UseGuards(new RoleGuard(UserRole.ADMIN))

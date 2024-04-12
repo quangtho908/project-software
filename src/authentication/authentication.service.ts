@@ -4,6 +4,8 @@ import { TokenService } from "src/common/services/token.service";
 import { BcryptService } from "src/common/services/bcrypt.service";
 import { Successfully } from "src/common/model/response.model";
 import { UserService } from "src/users/user.service";
+import { Users } from "src/entities";
+import * as _ from "lodash";
 
 @Injectable()
 export class AuthenticationService {
@@ -40,5 +42,18 @@ export class AuthenticationService {
     const newToken = await this.tokenService.create(userByEmail);
 
     return new Successfully({ token: newToken.token });
+  }
+
+  public async logout(user: Users) {
+    const {token, isExpried} = await this.tokenService.getToken(user)
+    if(_.isEmpty(token)) {
+      return new Successfully()
+    }
+
+    if(isExpried) return new Successfully();
+    
+    await this.tokenService.expiredToken(token)
+
+    return new Successfully();
   }
 }

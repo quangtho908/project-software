@@ -1,14 +1,13 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Applicants, ApplicantsStrategies, Strategies } from "src/entities";
+import { Applicants, Strategies } from "src/entities";
 import { StrategiesService } from "src/strategies/strategies.service";
 import { UniversitiesService } from "src/universities/universities.service";
 import { Repository } from "typeorm";
-import { CreateApplicantBody } from "./Request";
+import { CreateApplicantBody, GetApplicantParam } from "./Request";
 import * as _ from "lodash";
 import { Successfully } from "src/common/model/response.model";
 import { ApplicantStrategyService } from "./applicantStrategy.service";
-import { GetApplicantParam } from "./Request/getApplicants.param";
 
 @Injectable()
 export class ApplicantsService {

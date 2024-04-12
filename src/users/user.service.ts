@@ -1,8 +1,8 @@
-import { BadRequestException, Inject, Injectable, forwardRef } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Users } from "src/entities";
 import { Repository } from "typeorm";
-import { CreateSchoolUserBody } from "./Request";
+import { CreateSchoolUserBody, GetUserQuery } from "./Request";
 import { UniversitiesService } from "src/universities/universities.service";
 import * as _ from "lodash";
 import { BcryptService } from "src/common/services/bcrypt.service";
@@ -25,6 +25,39 @@ export class UserService {
 
   public findById(id: number) {
     return this.userRepository.findOneBy({ id });
+  }
+
+  public async getOne(id: number) {
+    const user = await this.findById(id)
+    if (_.isEmpty(user)) {
+      throw new NotFoundException("User is not exist")
+    }
+
+    return new Successfully({
+      ..._.omit(user, "password")
+    })
+  }
+
+  public async getMany(data: GetUserQuery) {
+    if (_.isEmpty(data.university)) {
+      const users = await this.userRepository.find({ relations: { organization: true } })
+      return new Successfully(users)
+    }
+    const university = await this.universitiesService.findById(data.university);
+
+    if (_.isEmpty(university)) {
+      throw new BadRequestException("University is not exist")
+    }
+
+    const users = await this.userRepository.find({
+      where: { organization: university },
+      relations: {organization: true}
+    })
+    const result = _.map(users, user => {
+      return _.omit(user, "password")
+    })
+
+    return new Successfully(result)
   }
 
   public async createSchoolUser(body: CreateSchoolUserBody) {
@@ -61,6 +94,10 @@ export class UserService {
     const user = await this.findById(id);
     if (_.isEmpty(user)) {
       throw new BadRequestException(["User is not exist"])
+    }
+
+    if (user.role === UserRole.ADMIN) {
+      throw new BadRequestException(["Can not remove admin"])
     }
 
     await this.userRepository.delete({ id })

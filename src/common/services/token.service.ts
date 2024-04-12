@@ -3,8 +3,8 @@ import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Tokens, Users } from "src/entities";
 import { Repository } from "typeorm";
-import { Successfully } from "../model/response.model";
 import { UserService } from "src/users/user.service";
+import * as _ from "lodash";
 
 @Injectable()
 export class TokenService {
@@ -72,5 +72,16 @@ export class TokenService {
     } catch (error) {
       return null
     }
+  }
+
+  public async expiredToken(token: string) {
+    const tokenData = await this.tokenRepository.findOneBy({ token, isExpired: false })
+
+    if(_.isEmpty(tokenData)) return;
+
+    tokenData.isExpired = true;
+
+    await this.tokenRepository.save(tokenData)
+    return;
   }
 }

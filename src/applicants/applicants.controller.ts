@@ -1,13 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { UpdateApplyParam, CreateApplicantBody } from "./Request";
+import { UpdateApplyParam, CreateApplicantBody, GetApplicantParam } from "./Request";
 import { ApplicantsService } from "./applicants.service";
 import { ApplicantStrategyService } from "./applicantStrategy.service";
 import { AcceptApplyBody } from "./Request";
 import { RoleGuard } from "src/common/guard/role.guard";
 import { UserRole } from "src/common/constant";
 import { AuthGuard } from "src/common/guard/auth.guard";
-import { GetApplicantParam } from "./Request/getApplicants.param";
 import * as _ from "lodash";
 
 @ApiTags("applicants")

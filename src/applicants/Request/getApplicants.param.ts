@@ -8,6 +8,8 @@ export class GetApplicantParam {
     example: 1,
     required: false
   })
+  @ValidateIf((object, value) => !_.isEmpty(value))
+  @IsNumberString()
   applicant: number
 
   @ApiProperty({

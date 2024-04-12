@@ -1,14 +1,12 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { error } from "console";
 import { ApplicantStatus } from "src/common/constant";
 import { Applicants, Strategies } from "src/entities";
 import { ApplicantsStrategies } from "src/entities/ApplicantsStrategies";
-import { FindManyOptions, Repository } from "typeorm";
-import { UpdateApplyParam } from "./Request";
+import { Repository } from "typeorm";
+import { GetApplicantParam, UpdateApplyParam } from "./Request";
 import * as _ from "lodash";
 import { Successfully } from "src/common/model/response.model";
-import { GetApplicantParam } from "./Request/getApplicants.param";
 
 @Injectable()
 export class ApplicantStrategyService {
@@ -43,7 +41,6 @@ export class ApplicantStrategyService {
       strategy: strategies.id,
       applicant: applicants.id
     })
-    console.log(newAppliStra)
 
     return this.appliStraRepo.save(newAppliStra)
   }

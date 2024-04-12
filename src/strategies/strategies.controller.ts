@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { StrategiesService } from "./strategies.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateStrategyBody, StrategiesParams } from "./Request";
@@ -37,5 +37,13 @@ export class StrategiesController {
   @Put("strategy/accept/:id")
   public accept(@Param("id") id: number) {
     return this.strategiesService.accept(id);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(new RoleGuard(UserRole.ADMIN))
+  @UseGuards(AuthGuard)
+  @Delete("strategy/:id")
+  public delete(@Param("id") id: number) {
+    return this.strategiesService.delete(id);
   }
 }

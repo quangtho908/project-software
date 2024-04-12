@@ -75,13 +75,24 @@ export class StrategiesService {
 
   public async accept(id: number) {
     const strategy = await this.findById(id);
-    if(!strategy) {
+    if (!strategy) {
       throw new NotFoundException(["Strategy is not exist"]);
     }
 
     strategy.status = StrategyStatus.ACCEPTED;
 
     await this.strategiesRepo.save(strategy);
+    return new Successfully()
+  }
+
+  public async delete(id: number) {
+    const strategy = await this.findById(id);
+    if (!strategy) {
+      throw new NotFoundException(["Strategy is not exist"]);
+    }
+
+    await this.strategiesRepo.delete({ id })
+
     return new Successfully()
   }
 }

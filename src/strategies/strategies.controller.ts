@@ -12,8 +12,6 @@ import * as _ from "lodash";
 export class StrategiesController {
   constructor(private strategiesService: StrategiesService) {}
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @Get("strategies")
   public get(@Query() params: StrategiesParams) {
     if(!_.isEmpty(params.id)) {

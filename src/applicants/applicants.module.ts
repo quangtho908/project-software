@@ -7,12 +7,14 @@ import { UniversitiesModule } from "src/universities/universities.module";
 import { StrategiesModule } from "src/strategies/strategies.module";
 import { ApplicantsStrategies } from "src/entities/ApplicantsStrategies";
 import { ApplicantStrategyService } from "./applicantStrategy.service";
+import { UserModule } from "src/users/user.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Applicants, ApplicantsStrategies]),
     UniversitiesModule,
-    StrategiesModule
+    StrategiesModule,
+    UserModule
   ],
   controllers: [ApplicantsController],
   providers: [ApplicantsService, ApplicantStrategyService]

@@ -5,6 +5,8 @@ import { UniversityCreateBody } from "./Request";
 import { User } from "src/common/decorators";
 import { Users } from "src/entities";
 import { AuthGuard } from "src/common/guard/auth.guard";
+import { RoleGuard } from "src/common/guard/role.guard";
+import { UserRole } from "src/common/constant";
 
 @ApiTags("university")
 @Controller()
@@ -16,12 +18,15 @@ export class UniversitiesController {
     return this.universitiesService.find();
   }
   @ApiBearerAuth()
+  @UseGuards(new RoleGuard(UserRole.ADMIN))
   @UseGuards(AuthGuard)
   @Post("university")
   public create(@Body() body: UniversityCreateBody, @User() user: Users) {
     return this.universitiesService.create(body, user);
   }
+  
   @ApiBearerAuth()
+  @UseGuards(new RoleGuard(UserRole.ADMIN))
   @UseGuards(AuthGuard)
   @Delete("university/:id")
   public delete(@Param("id") id: number) {

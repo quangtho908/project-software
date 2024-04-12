@@ -28,7 +28,10 @@ export class UserService {
   }
 
   public async getOne(id: number) {
-    const user = await this.findById(id)
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: { organization: true }
+    })
     if (_.isEmpty(user)) {
       throw new NotFoundException("User is not exist")
     }
@@ -51,7 +54,7 @@ export class UserService {
 
     const users = await this.userRepository.find({
       where: { organization: university },
-      relations: {organization: true}
+      relations: { organization: true }
     })
     const result = _.map(users, user => {
       return _.omit(user, "password")

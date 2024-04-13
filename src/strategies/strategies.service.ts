@@ -22,7 +22,18 @@ export class StrategiesService {
   }
 
   public async getOne(data: StrategiesParams) {
-    const strategy = await this.strategiesRepo.findOneBy(data)
+    if (_.isEmpty(data.university)) {
+      const strategy = await this.strategiesRepo.findOneBy(data);
+      if (_.isEmpty(strategy)) {
+        throw new NotFoundException(["Strategy is not exist"])
+      }
+      return new Successfully(strategy);
+    }
+
+    const { university: universityId, ...query } = data;
+    const university = await this.universitiesService.findById(universityId)
+
+    const strategy = await this.strategiesRepo.findOneBy({ ...query, universities: [university] })
     if (_.isEmpty(strategy)) {
       throw new NotFoundException(["Strategy is not exist"])
     }

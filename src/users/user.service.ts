@@ -33,7 +33,7 @@ export class UserService {
       relations: { organization: true }
     })
     if (_.isEmpty(user)) {
-      throw new NotFoundException("User is not exist")
+      throw new NotFoundException(["User is not exist"])
     }
 
     return new Successfully({
@@ -49,7 +49,7 @@ export class UserService {
     const university = await this.universitiesService.findById(data.university);
 
     if (_.isEmpty(university)) {
-      throw new BadRequestException("University is not exist")
+      throw new BadRequestException(["University is not exist"])
     }
 
     const users = await this.userRepository.find({

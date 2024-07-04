@@ -17,8 +17,8 @@ const config = {
     autoLoadEntities: true,
     synchronize: false,
     migrations: [Migrations1720070073199],
-    ssl: false,
+    ssl: true
 }
 
 export default registerAs('typeorm', () => config)
-export const connectionSource = new DataSource(config as DataSourceOptions);
+export const connectionSource = new DataSource(config as DataSourceOptions);    

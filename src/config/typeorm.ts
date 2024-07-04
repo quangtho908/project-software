@@ -17,7 +17,7 @@ const config = {
     autoLoadEntities: true,
     synchronize: false,
     migrations: [Migrations1720070073199],
-    ssl: true,
+    ssl: false,
 }
 
 export default registerAs('typeorm', () => config)

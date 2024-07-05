@@ -67,17 +67,16 @@ export class ApplicantsService {
       throw new BadRequestException(["Strategy is invalid"])
     }
 
-    const applicant = await this.applicantsRepo.findOne({
-      where: { email: body.email },
-      relations: { university: true }
-    });
-    
-    if(!_.isEmpty(applicant)) {
-      const existAppliStra = await this.appliStraService.find(strategy, applicant.id);
+    const applicants = await this.applicantsRepo
+      .createQueryBuilder("a")
+      .leftJoinAndSelect("a.applicantsStrategies", "as")
+      .where("a.email = :email", {email: data.email})
+      .andWhere("as.strategy = :strategy", { strategy })
+      .andWhere("as.status IN (:...statuses)", {statuses: [ApplicantStatus.WAITING_ACCEPT, ApplicantStatus.ACCEPTED]})
+      .getMany()
 
-      if(!_.isEmpty(existAppliStra) && existAppliStra.status !== ApplicantStatus.CANCELED) {
-        throw new BadRequestException(["You already in this strategy"])
-      }
+    if(!_.isEmpty(applicants)) {
+      throw new BadRequestException("You already in this strategy");
     }
 
     const newApplicant = this.applicantsRepo.create({

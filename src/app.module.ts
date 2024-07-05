@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as entities from 'src/entities';
 import { CommonModule } from './common/common.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { JwtModule } from '@nestjs/jwt';

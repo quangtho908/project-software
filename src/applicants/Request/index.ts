@@ -1,4 +1,3 @@
 export * from "./create.applicant.body";
-export * from "./update.apply.param"
-export * from "./accept.apply.body"
+export * from "./updateStatus.apply.body"
 export * from "./getApplicants.param"

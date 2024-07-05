@@ -1,13 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsNumberString } from "class-validator";
+import { IsNotEmpty, IsNumber } from "class-validator";
 
-export class UpdateApplyParam {
+export class UpdateStatusApplyBody  {
   @ApiProperty({
     example: 6,
     required: true 
   })
   @IsNotEmpty()
-  @IsNumberString()
+  @IsNumber()
   id: number
 
   @ApiProperty({
@@ -15,6 +15,6 @@ export class UpdateApplyParam {
     required: true
   })
   @IsNotEmpty()
-  @IsNumberString()
+  @IsNumber()
   strategy: number
 }

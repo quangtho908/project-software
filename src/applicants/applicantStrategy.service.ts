@@ -4,7 +4,7 @@ import { ApplicantStatus } from "src/common/constant";
 import { Applicants, Strategies } from "src/entities";
 import { ApplicantsStrategies } from "src/entities/ApplicantsStrategies";
 import { Repository } from "typeorm";
-import { GetApplicantParam, UpdateApplyParam } from "./Request";
+import { GetApplicantParam, UpdateStatusApplyBody } from "./Request";
 import * as _ from "lodash";
 import { Successfully } from "src/common/model/response.model";
 
@@ -45,24 +45,29 @@ export class ApplicantStrategyService {
     return this.appliStraRepo.save(newAppliStra)
   }
 
-  public async accept(data: UpdateApplyParam) {
+  public async accept(data: UpdateStatusApplyBody) {
     const appliStra = await this.find(data.strategy, data.id);
     if (_.isEmpty(appliStra)) {
-      throw new BadRequestException("Strategy is not exist")
+      throw new BadRequestException(["Strategy is not exist"])
     }
 
-    appliStra.status = ApplicantStatus.SCHOOL_ACCEPTED;
+    if(appliStra.status === ApplicantStatus.CANCELED) { 
+      throw new BadRequestException(["This applicant is rejected"])
+    }
+
+    appliStra.status = ApplicantStatus.ACCEPTED;
     await this.appliStraRepo.save(appliStra);
     return new Successfully();
   }
 
-  public async remove(data: UpdateApplyParam) {
+  public async reject(data: UpdateStatusApplyBody) {
     const appliStra = await this.find(data.strategy, data.id);
     if (_.isEmpty(appliStra)) {
       throw new BadRequestException("Strategy is not exist")
     }
 
-    await this.appliStraRepo.remove(appliStra);
+    appliStra.status = ApplicantStatus.CANCELED;
+    await this.appliStraRepo.save(appliStra);
     return new Successfully();
   }
 }

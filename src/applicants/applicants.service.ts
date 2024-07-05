@@ -8,6 +8,7 @@ import { CreateApplicantBody, GetApplicantParam } from "./Request";
 import * as _ from "lodash";
 import { Successfully } from "src/common/model/response.model";
 import { ApplicantStrategyService } from "./applicantStrategy.service";
+import { ApplicantStatus } from "src/common/constant";
 
 @Injectable()
 export class ApplicantsService {
@@ -70,9 +71,13 @@ export class ApplicantsService {
       where: { email: body.email },
       relations: { university: true }
     });
+    
+    if(!_.isEmpty(applicant)) {
+      const existAppliStra = await this.appliStraService.find(strategy, applicant.id);
 
-    if (!_.isEmpty(applicant)) {
-      return this.addStrategy(applicant, strategyExist);
+      if(!_.isEmpty(existAppliStra) && existAppliStra.status !== ApplicantStatus.CANCELED) {
+        throw new BadRequestException(["You already in this strategy"])
+      }
     }
 
     const newApplicant = this.applicantsRepo.create({
@@ -88,15 +93,5 @@ export class ApplicantsService {
       ..._.omit(saveApplicant, ["updatedBy"])
     })
 
-  }
-
-  public async addStrategy(applicant: Applicants, strategy: Strategies) {
-    const exitsStrategy = await this.appliStraService.find(applicant.id, strategy.id);
-    if (!_.isEmpty(exitsStrategy)) {
-      return new Successfully(applicant)
-    }
-
-    await this.appliStraService.create(strategy, applicant);
-    return new Successfully(applicant)
   }
 }

@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Users } from "src/entities";
+import { Universities, Users } from "src/entities";
 import { Repository } from "typeorm";
 import { CreateSchoolUserBody, GetUserQuery } from "./Request";
 import { UniversitiesService } from "src/universities/universities.service";
@@ -77,20 +77,43 @@ export class UserService {
       throw new BadRequestException(["University is not exist"])
     }
 
-    const password = await this.bcryptService.hashPassword(university.code);
-
-    const newUser = this.userRepository.create({
+    const savedUser = await this.createUser({
       ...data,
-      organization: university,
-      password,
-      createdAt: new Date(),
+      password: university.code,
+      university,
       role: UserRole.SCHOOL
     })
-
-    const savedUser = await this.userRepository.save(newUser)
+    
     return new Successfully({
       ..._.omit(savedUser, "password")
     })
+  }
+
+  public async createUser({
+    email, 
+    fullName, 
+    password, 
+    university,
+    role
+  }: {
+    email: string, 
+    fullName: string, 
+    password: string, 
+    university: Universities,
+    role: number
+  }) {
+    const hashPassword = await this.bcryptService.hashPassword(password);
+
+    const newUser = this.userRepository.create({
+      email,
+      fullName,
+      organization: university,
+      password: hashPassword,
+      createdAt: new Date(),
+      role
+    })
+
+    return this.userRepository.save(newUser)
   }
 
   public async delete(id: number) {

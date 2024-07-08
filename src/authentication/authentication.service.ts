@@ -1,11 +1,13 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { LoginBody } from "./Request";
+import { LoginBody, SignupBody } from "./Request";
 import { TokenService } from "src/common/services/token.service";
 import { BcryptService } from "src/common/services/bcrypt.service";
 import { Successfully } from "src/common/model/response.model";
 import { UserService } from "src/users/user.service";
 import { Users } from "src/entities";
 import * as _ from "lodash";
+import { UniversitiesService } from "src/universities/universities.service";
+import { UserRole } from "src/common/constant";
 
 @Injectable()
 export class AuthenticationService {
@@ -13,7 +15,8 @@ export class AuthenticationService {
   constructor(
     private userService: UserService,
     private tokenService: TokenService,
-    private bcryptService: BcryptService
+    private bcryptService: BcryptService,
+    private universitiesService: UniversitiesService
   ) { }
 
   public async login(body: LoginBody) {
@@ -55,5 +58,30 @@ export class AuthenticationService {
     await this.tokenService.expiredToken(token)
 
     return new Successfully();
+  }
+
+  public async signup(user: SignupBody) {
+    const { universityId, ...data } = user
+    const [university, userExist] = await Promise.all([
+      this.universitiesService.findById(universityId),
+      this.userService.findUserByEmail(data.email)
+    ])
+    if (!_.isEmpty(userExist)) {
+      throw new BadRequestException(["User is already"])
+    }
+
+    if (_.isEmpty(university)) {
+      throw new BadRequestException(["University is not exist"])
+    }
+
+    const savedUser = await this.userService.createUser({
+      ...data,
+      university,
+      role: UserRole.STUDENT
+    })
+
+    return new Successfully({
+      ..._.omit(savedUser, "password")
+    })
   }
 }

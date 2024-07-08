@@ -40,6 +40,14 @@ export class StrategiesController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(new RoleGuard(UserRole.SCHOOL))
+  @UseGuards(AuthGuard)
+  @Put("strategy/accept/:id")
+  public cancel(@Param("id") id: number) {
+    return this.strategiesService.accept(id);
+  }
+
+  @ApiBearerAuth()
   @UseGuards(new RoleGuard(UserRole.ADMIN))
   @UseGuards(AuthGuard)
   @Delete("strategy/:id")

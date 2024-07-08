@@ -96,6 +96,17 @@ export class StrategiesService {
     return new Successfully()
   }
 
+  public async cancel(id: number) {
+    const strategy = await this.findById(id);
+    if(!strategy) {
+      throw new NotFoundException(["Strategy is not exist"])
+    }
+
+    strategy.status = StrategyStatus.CANCEL;
+    await this.strategiesRepo.save(strategy);
+    return new Successfully();
+  }
+
   public async delete(id: number) {
     const strategy = await this.findById(id);
     if (!strategy) {

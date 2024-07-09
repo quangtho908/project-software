@@ -20,7 +20,7 @@ export class UserService {
   ) { }
 
   public findUserByEmail(email: string) {
-    return this.userRepository.findOneBy({ email });
+    return this.userRepository.findOne({ where: {email}, relations: {organization: true} });
   }
 
   public findById(id: number) {

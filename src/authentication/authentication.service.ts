@@ -21,7 +21,7 @@ export class AuthenticationService {
 
   public async login(body: LoginBody) {
     const userByEmail = await this.userService.findUserByEmail(body.email);
-
+    
     if (!userByEmail) {
       throw new BadRequestException(["Email or Password is invalid!"])
     }

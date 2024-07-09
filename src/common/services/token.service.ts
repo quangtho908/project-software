@@ -30,7 +30,7 @@ export class TokenService {
       id: user.id,
       email: user.email,
       role: user.role,
-      university: user.organization,
+      university: user.organization?.id,
       time: Date.now()
     });
 

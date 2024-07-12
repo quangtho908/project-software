@@ -39,6 +39,9 @@ export class Users {
   @OneToMany(() => Applicants, (applicants) => applicants.updatedBy)
   applicants: Applicants[];
 
+  @OneToMany(() => Applicants, (applicants) => applicants.user)
+  joinStrategies: Applicants[];
+
   @OneToMany(() => Strategies, (strategies) => strategies.createdBy)
   strategies: Strategies[];
 

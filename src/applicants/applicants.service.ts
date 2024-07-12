@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Applicants, Strategies } from "src/entities";
+import { Applicants, Users } from "src/entities";
 import { StrategiesService } from "src/strategies/strategies.service";
 import { UniversitiesService } from "src/universities/universities.service";
 import { Repository } from "typeorm";
@@ -8,7 +8,7 @@ import { CreateApplicantBody, GetApplicantParam } from "./Request";
 import * as _ from "lodash";
 import { Successfully } from "src/common/model/response.model";
 import { ApplicantStrategyService } from "./applicantStrategy.service";
-import { ApplicantStatus } from "src/common/constant";
+import { ApplicantStatus, StrategyStatus } from "src/common/constant";
 
 @Injectable()
 export class ApplicantsService {
@@ -52,7 +52,7 @@ export class ApplicantsService {
     return new Successfully(result)
   }
 
-  public async create(body: CreateApplicantBody) {
+  public async create(body: CreateApplicantBody, user: Users) {
     const { university, strategy, ...data } = body;
     const [uninversityExist, strategyExist] = await Promise.all([
       this.universitiesService.findById(university),
@@ -63,7 +63,7 @@ export class ApplicantsService {
       throw new BadRequestException(["University is invalid"])
     }
 
-    if (_.isEmpty(strategyExist)) {
+    if (_.isEmpty(strategyExist) || strategyExist.status !== StrategyStatus.ACCEPTED) {
       throw new BadRequestException(["Strategy is invalid"])
     }
 
@@ -81,6 +81,7 @@ export class ApplicantsService {
 
     const newApplicant = this.applicantsRepo.create({
       ...data,
+      user,
       university: uninversityExist,
       createdAt: new Date()
     })

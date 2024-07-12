@@ -17,6 +17,10 @@ export class Applicants {
   @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;
 
+  @ManyToOne(() => Users, (users) => users.joinStrategies)
+  @JoinColumn({name: "user_id", referencedColumnName: "id"})
+  user: Users
+
   @Column("text", { name: "full_name" })
   fullName: string;
 

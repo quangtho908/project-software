@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ApplicantStatus } from "src/common/constant";
-import { Applicants, Strategies } from "src/entities";
+import { Applicants, Strategies, Users } from "src/entities";
 import { ApplicantsStrategies } from "src/entities/ApplicantsStrategies";
 import { Repository } from "typeorm";
-import { GetApplicantParam, UpdateStatusApplyBody } from "./Request";
+import { GetApplicantParam, GetStrategiesParams, UpdateStatusApplyBody } from "./Request";
 import * as _ from "lodash";
 import { Successfully } from "src/common/model/response.model";
 
@@ -21,6 +21,20 @@ export class ApplicantStrategyService {
       relations: { applicant2: true, strategy2: true }
     });
   }
+
+
+  public getStrategies(params: GetStrategiesParams, user: Users) {
+    return this.appliStraRepo
+    .createQueryBuilder("as")
+    .leftJoin("as.applicant2", "a")
+    .leftJoinAndSelect("as.strategy2", "s")
+    .where("a.user_id = :userId", {userId: user.id})
+    .andWhere("as.status IN (:...statuses)", {
+      statuses: _.isEmpty(params.status) ? [ApplicantStatus.WAITING_ACCEPT, ApplicantStatus.ACCEPTED]: [params.status]
+    })
+    .getRawMany()
+  }
+
 
   public findOneBy(data: GetApplicantParam) {
     return this.appliStraRepo.findOne({
